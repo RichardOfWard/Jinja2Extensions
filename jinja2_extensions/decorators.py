@@ -9,7 +9,7 @@ def simple_tag(function):
         tags = set([tag_name])
 
         def parse(self, parser):
-            lineno = parser.stream.next().lineno
+            lineno = next(parser.stream).lineno
             node = nodes.Output([self.call_method('_render')])
             node.set_lineno(lineno)
             return node
