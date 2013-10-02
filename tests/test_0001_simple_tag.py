@@ -1,5 +1,5 @@
 import jinja2
-from jinja2_extensions.decorators import simple_tag
+from jinja2_extensions.decorators import simple_tag, SimpleTag
 from .utils import check_result, check_error
 
 
@@ -174,4 +174,19 @@ def test_0019_arg_tag2_expressions():
         arg_tag2,
         '{% arg_tag2 1 + 2 3 + 4 %}',
         '3 7',
+    )
+
+
+class SubclassTag(SimpleTag):
+    tags = set(['subclass_tag'])
+
+    def _render(self, arg1, arg2):
+        return "%s %s" % (str(arg1), str(arg2))
+
+
+def test_0020_subclass_tag():
+    check_result(
+        SubclassTag,
+        '{% subclass_tag 1 arg2 = 2 + 3 %}',
+        '1 5',
     )
