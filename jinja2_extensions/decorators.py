@@ -9,14 +9,13 @@ def simple_tag(function):
     class SimpleTagDecorated(SimpleTag):
         tags = set([tag_name])
 
-        def _render(self, *args, **kwargs):
+        def render(self, *args, **kwargs):
             return function(*args, **kwargs)
 
     return SimpleTagDecorated
 
 
 class SimpleTag(Extension):
-
     def parse(self, parser):
         stream = parser.stream
         lineno = next(stream).lineno
@@ -50,8 +49,8 @@ class SimpleTag(Extension):
 
     def _process_args_and_render(self, args, kwargs_list):
         kwargs = dict(zip(kwargs_list[::2], kwargs_list[1::2]))
-        return self._render(*args, **kwargs)
+        return self.render(*args, **kwargs)
 
-    def _render(self, args, **kwargs):
+    def render(self, *args, **kwargs):
         raise NotImplementedError(
-            "_render not implemented for %s" % self.__class__)
+            "render not implemented for %s" % self.__class__)

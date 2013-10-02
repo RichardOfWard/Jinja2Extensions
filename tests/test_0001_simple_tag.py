@@ -180,7 +180,7 @@ def test_0019_arg_tag2_expressions():
 class SubclassTag(SimpleTag):
     tags = set(['subclass_tag'])
 
-    def _render(self, arg1, arg2):
+    def render(self, arg1, arg2):
         return "%s %s" % (str(arg1), str(arg2))
 
 
