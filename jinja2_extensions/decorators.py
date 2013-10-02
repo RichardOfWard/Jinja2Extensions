@@ -1,3 +1,4 @@
+import jinja2
 from jinja2 import nodes
 from jinja2.ext import Extension
 
@@ -21,6 +22,13 @@ def simple_tag(function):
                     stream.skip()
                     value = parser.parse_expression()
                     kwargs += [key, value]
+                elif kwargs:
+                    raise jinja2.TemplateSyntaxError(
+                        "non-keyword arg after keyword arg",
+                        next(stream).lineno,
+                        stream.name,
+                        stream.filename
+                    )
                 else:
                     args.append(parser.parse_expression())
 
