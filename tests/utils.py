@@ -1,7 +1,5 @@
 import jinja2
 
-from jinja2.exceptions import TemplateSyntaxError
-
 
 def render_template_string(extension, template_string, **kwargs):
     env = jinja2.Environment(extensions=[extension],
@@ -16,10 +14,10 @@ def check_result(extension, template_string, expected, **kwargs):
         repr(expected), repr(result))
 
 
-def check_syntax_error(extension, template_string, **kwargs):
+def check_error(extension, template_string, exception_class, **kwargs):
     try:
         render_template_string(extension, template_string, **kwargs)
-    except TemplateSyntaxError:
+    except exception_class:
         pass
     else:
-        assert False, "Expected a syntax error for " + repr(template_string)
+        assert False, "Expected TypeError for " + repr(template_string)

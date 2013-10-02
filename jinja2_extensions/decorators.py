@@ -9,12 +9,29 @@ def simple_tag(function):
         tags = set([tag_name])
 
         def parse(self, parser):
-            lineno = next(parser.stream).lineno
-            node = nodes.Output([self.call_method('_render')])
-            node.set_lineno(lineno)
-            return node
+            stream = parser.stream
+            lineno = next(stream).lineno
+            args = []
+            kwargs = []
+            while not stream.current.test('block_end'):
+                current = stream.current
+                if current.test('name') and stream.look().test('assign'):
+                    key = nodes.Const(next(stream).value,
+                                      lineno=stream.current.lineno)
+                    stream.skip()
+                    value = parser.parse_expression()
+                    kwargs += [key, value]
+                else:
+                    args.append(parser.parse_expression())
 
-        def _render(self):
-            return function()
+            args_node = nodes.List(args)
+            kwargs_node = nodes.List(kwargs)
+            return nodes.Output(
+                [self.call_method('_render', args=[args_node, kwargs_node])]
+            ).set_lineno(lineno)
+
+        def _render(self, args, kwargs_list):
+            kwargs = dict(zip(kwargs_list[::2], kwargs_list[1::2]))
+            return function(*args, **kwargs)
 
     return SimpleTagExtension
