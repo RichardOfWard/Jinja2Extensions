@@ -4,6 +4,17 @@ from jinja2.ext import Extension
 
 
 def simple_tag(function):
+    """Using simple tag to decorate a function will result in a Jinja2
+    Extension allowing that function to be called from a template.
+
+    Incorrect numbers, ordering or naming of arguments in the template will
+    cause a TypeError to be raised, exactly if the funcion had been
+    incorrectly in python. As with Python code, positional arguments cannot
+    follow keyword arguments (i.e. you can't do `{% foo arg1=1 2 %}`).
+
+    simple_tag is a thin wrapper around the SimpleTag class.
+    """
+
     tag_name = function.__name__
 
     class SimpleTagDecorated(SimpleTag):
@@ -16,6 +27,22 @@ def simple_tag(function):
 
 
 class SimpleTag(Extension):
+    """SimpleTag is base class for creating simple extensions that
+    simply return a value to be rendered in the template.
+
+    To use SimpleTag you must create your own class inheriting from it
+    You must give it a tags attribute (a set containing the names by
+    which your tag can be called from a template) and implement your own
+    render method. `render` can accept positional and keyword arguments.
+
+    Incorrect numbers, ordering or naming of arguments in the template will
+    cause a TypeError to be raised, exactly if the funcion had been
+    incorrectly in python. As with Python code, positional arguments cannot
+    follow keyword arguments (i.e. you can't do `{% foo arg1=1 2 %}`).
+
+    The simple_tag decorator is a quick and easy method of using SimpleTag.
+    """
+
     def parse(self, parser):
         stream = parser.stream
         lineno = next(stream).lineno
