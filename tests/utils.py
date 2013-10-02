@@ -20,4 +20,7 @@ def check_error(extension, template_string, exception_class, **kwargs):
     except exception_class:
         pass
     else:
-        assert False, "Expected TypeError for " + repr(template_string)
+        assert False, "Expected %s for %s" % (
+            exception_class.__name__,
+            repr(template_string)
+        )
